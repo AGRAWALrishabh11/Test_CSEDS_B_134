@@ -1,19 +1,28 @@
-// Define jokes array
-const jokes = [
-    "Why did the scarecrow win an award? Because he was outstanding in his field!",
-    "Why don’t scientists trust atoms? Because they make up everything!",
-    "I told my wife she was drawing her eyebrows too high. She looked surprised.",
-    "Why did the bicycle fall over? Because it was two-tired!",
-    "I would tell you a construction joke, but I'm still working on it.",
-    "Why can’t you give Elsa a balloon? Because she will let it go!",
-    "I used to play piano by ear, but now I use my hands."
-];
+// Function to fetch a joke from the API and display it
+async function fetchJoke() {
+    try {
+        const response = await fetch('https://v2.jokeapi.dev/joke/Any');
+        const data = await response.json();
 
-// Function to generate a random joke
-function generateJoke() {
-    const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
-    document.querySelector(".main2 h5").textContent = randomJoke; // Display the joke
-    document.querySelector(".main2 h6").textContent = `Character count: ${randomJoke.length}`; // Display character count
+        let joke = "";
+
+        // Check if the joke has a setup and delivery (two-part joke) or a single line
+        if (data.type === "twopart") {
+            joke = `${data.setup} ... ${data.delivery}`;
+        } else {
+            joke = data.joke;
+        }
+
+        // Display the joke
+        document.querySelector(".main2 h5").textContent = joke;
+
+        // Display the character count
+        document.querySelector(".main2 h6").textContent = `Character count: ${joke.length}`;
+    } catch (error) {
+        document.querySelector(".main2 h5").textContent = "Failed to fetch a joke. Please try again.";
+        document.querySelector(".main2 h6").textContent = "Character count: 0";
+        console.error("Error fetching joke:", error);
+    }
 }
 
 // Function to clear the joke and character count
@@ -23,5 +32,5 @@ function clearJoke() {
 }
 
 // Attach event listeners to buttons
-document.querySelector(".b1").addEventListener("click", generateJoke);
+document.querySelector(".b1").addEventListener("click", fetchJoke);
 document.querySelector(".b2").addEventListener("click", clearJoke);
